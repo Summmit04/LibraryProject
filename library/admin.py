@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import Book, IssuedBook, StudentProfile, Category
+from .models import Book, IssuedBook, StudentProfile, Category, Author
 admin.site.register(Book)
 admin.site.register(IssuedBook)
+admin.site.register(Author)
 
 class StudentProfileInline(admin.StackedInline):
     model = StudentProfile
