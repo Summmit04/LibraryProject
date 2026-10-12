@@ -1,0 +1,187 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<style>
+    .dashboard-card-link {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        cursor: pointer;
+    }
+    .dashboard-card-link:hover {
+        transform: translateY(-4px);
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="fw-bold text-body-emphasis mb-4">Dashboard Overview</h2>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a href="{% url 'manage_books' %}" class="card dashboard-card-link border-0 shadow-sm bg-body h-100 py-2 text-decoration-none" style="border-left: 4px solid var(--bs-primary) !important;">
+                <div class="card-body">
+                    <p class="text-body-secondary fw-bold text-uppercase mb-1" style="font-size: 0.8rem;">Total Books</p>
+                    <h3 class="fw-bold text-body-emphasis mb-0">{{ total_books }}</h3>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="{% url 'manage_students' %}" class="card dashboard-card-link border-0 shadow-sm bg-body h-100 py-2 text-decoration-none" style="border-left: 4px solid #198754 !important;">
+                <div class="card-body">
+                    <p class="text-body-secondary fw-bold text-uppercase mb-1" style="font-size: 0.8rem;">Active Students</p>
+                    <h3 class="fw-bold text-body-emphasis mb-0">{{ total_students }}</h3>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="{% url 'manage_issued_books' %}" class="card dashboard-card-link border-0 shadow-sm bg-body h-100 py-2 text-decoration-none" style="border-left: 4px solid #ffc107 !important;">
+                <div class="card-body">
+                    <p class="text-body-secondary fw-bold text-uppercase mb-1" style="font-size: 0.8rem;">Books Issued</p>
+                    <h3 class="fw-bold text-body-emphasis mb-0">{{ issued_books_count }}</h3>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="{% url 'manage_issued_books' %}?status=overdue" class="card dashboard-card-link border-0 shadow-sm bg-body h-100 py-2 text-decoration-none" style="border-left: 4px solid #dc3545 !important;">
+                <div class="card-body">
+                    <p class="text-body-secondary fw-bold text-uppercase mb-1" style="font-size: 0.8rem;">Overdue Books</p>
+                    <h3 class="fw-bold text-body-emphasis mb-0">{{ overdue_books_count }}</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 bg-body h-100">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-body-emphasis mb-0">Books Issued (Last 7 Days)</h5>
+                </div>
+                <div class="card-body p-4" style="height: 300px;">
+                    <canvas id="weeklyActivityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 bg-body h-100">
+                <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-body-emphasis mb-0">Inventory Breakdown</h5>
+                </div>
+                <div class="card-body p-4 d-flex flex-column align-items-center">
+                    <div style="height: 180px; width: 100%;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div id="categoryLegend" class="mt-4 w-100 small"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryLabels = JSON.parse('{{ category_labels|safe|escapejs }}');
+        const categoryData = JSON.parse('{{ category_data|safe|escapejs }}');
+        const daysLabels = JSON.parse('{{ days_labels|safe|escapejs }}');
+        const weeklyIssuedCounts = JSON.parse('{{ weekly_issued_counts|safe|escapejs }}');
+
+        let activityChart, doughnutChart;
+
+        function getThemeColors() {
+            const styles = getComputedStyle(document.documentElement);
+            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            
+            return {
+                text: styles.getPropertyValue('--bs-body-color').trim() || '#212529',
+                grid: styles.getPropertyValue('--bs-border-color').trim() || 'rgba(0,0,0,0.1)',
+                doughnutBorder: isDark ? '#212529' : '#ffffff'
+            };
+        }
+
+        function buildCharts() {
+            const colors = getThemeColors();
+
+            const activityCtx = document.getElementById('weeklyActivityChart').getContext('2d');
+            activityChart = new Chart(activityCtx, {
+                type: 'bar',
+                data: {
+                    labels: daysLabels,
+                    datasets: [{
+                        label: 'Books Issued',
+                        data: weeklyIssuedCounts,
+                        backgroundColor: 'rgba(13, 110, 253, 0.8)',
+                        borderRadius: 6
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: colors.text } }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: colors.grid },
+                            ticks: { color: colors.text }
+                        },
+                        y: {
+                            grid: { color: colors.grid },
+                            ticks: { color: colors.text }
+                        }
+                    }
+                }
+            });
+
+            if (categoryData.length > 0) {
+                const backgroundColors = ['#0d6efd', '#20c997', '#ffc107', '#dc3545', '#6c757d', '#6f42c1', '#fd7e14'];
+                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                
+                doughnutChart = new Chart(categoryCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: categoryLabels,
+                        datasets: [{
+                            data: categoryData,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 2,
+                            borderColor: colors.doughnutBorder
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '75%',
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                const legendContainer = document.getElementById('categoryLegend');
+                legendContainer.innerHTML = ''; 
+                categoryLabels.forEach((label, index) => {
+                    const color = backgroundColors[index % backgroundColors.length];
+                    legendContainer.innerHTML += `
+                        <div class="d-flex align-items-center mb-2 text-body">
+                            <div style="width: 12px; height: 12px; background-color: ${color}; border-radius: 50%; margin-right: 10px;"></div>
+                            <span class="text-truncate" title="${label}">${label}</span>
+                            <span class="ms-auto fw-bold">${categoryData[index]}</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        buildCharts();
+
+        const observer = new MutationObserver(() => {
+            if (activityChart) activityChart.destroy();
+            if (doughnutChart) doughnutChart.destroy();
+            buildCharts();
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-bs-theme'] });
+    });
+</script>
+{% endblock %}

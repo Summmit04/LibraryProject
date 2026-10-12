@@ -1,0 +1,46 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <a href="{% url 'manage_issued_books' %}" class="btn btn-outline-secondary mb-3">&larr; Back to Issued Books</a>
+            
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 fw-bold">Issue a New Book</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Select Student</label>
+                            <select name="student" class="form-select" required>
+                                <option value="" selected disabled>-- Choose a Student --</option>
+                                {% for student in students %}
+                                    <option value="{{ student.id }}">{{ student.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Select Book</label>
+                            <select name="book" class="form-select" required>
+                                <option value="" selected disabled>-- Choose a Book --</option>
+                                {% for book in books %}
+                                    <option value="{{ book.id }}">{{ book.title }} (Available: {{ book.copies_available }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm text-uppercase">
+                            Issue Book to Student
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

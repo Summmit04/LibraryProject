@@ -1,0 +1,103 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<style>
+    [data-bs-theme="dark"] .page-heading { color: #ffffff !important; }
+    [data-bs-theme="light"] .page-heading { color: #000000 !important; }
+</style>
+
+<div class="container mt-4 mb-5">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <!-- Custom heading class for pure Black in day mode & pure White in night mode -->
+            <h2 class="fw-bold mb-1 page-heading">
+                {% if request.GET.status == 'overdue' %}Overdue Books{% else %}Currently Issued Books{% endif %}
+            </h2>
+        </div>
+        {% if request.GET.status != 'overdue' %}
+        <a href="{% url 'issue_book' %}" class="btn btn-primary fw-semibold px-4 shadow-sm rounded-pill">
+            <i class="bi bi-plus-lg me-1">+ Issue New Book</i>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Main Card Container -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white text-dark">
+        <!-- Project Themed Blue Header -->
+        <div class="card-header bg-primary text-white py-3 px-4 border-0">
+            <h5 class="mb-0 fw-bold">
+                {% if request.GET.status == 'overdue' %}
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Overdue Records & Fines
+                {% else %}
+                    <i class="bi bi-journal-check me-2"></i>Active Issued Records
+                {% endif %}
+            </h5>
+        </div>
+
+        <div class="card-body p-0 bg-white">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-dark">
+                    <thead class="table-light text-uppercase fs-7 text-secondary">
+                        <tr>
+                            <th class="py-3 ps-4 bg-light text-secondary">Student Name</th>
+                            <th class="py-3 bg-light text-secondary">Book Title</th>
+                            <th class="py-3 bg-light text-secondary">Issue Date</th>
+                            <th class="py-3 bg-light text-secondary">Due Date</th>
+                            {% if request.GET.status == 'overdue' %}
+                            <th class="py-3 bg-light text-secondary">Fine Accumulation</th>
+                            <th class="py-3 text-center bg-light text-secondary">Status</th>
+                            {% else %}
+                            <th class="py-3 text-center bg-light text-secondary">Status</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        {% for issued in issued_books %}
+                        <tr class="bg-white">
+                            <td class="ps-4 fw-semibold text-primary bg-white">
+                                {{ issued.student.username }}
+                            </td>
+                            <td class="fw-medium text-dark bg-white">
+                                {{ issued.book.title }}
+                            </td>
+                            <td class="text-dark small bg-white">
+                                {{ issued.issue_date|date:"M d, Y" }}
+                            </td>
+                            <td class="text-dark small fw-semibold bg-white">
+                                {{ issued.expiry_date|date:"M d, Y" }}
+                            </td>
+                            {% if request.GET.status == 'overdue' %}
+                            <td class="fw-bold text-danger bg-white">
+                                ${{ issued.calculate_fine }}
+                            </td>
+                            <td class="text-center bg-white">
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-semibold">
+                                    Overdue
+                                </span>
+                            </td>
+                            {% else %}
+                            <td class="text-center bg-white">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold">
+                                    Active Loan
+                                </span>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{% if request.GET.status == 'overdue' %}6{% else %}5{% endif %}" class="text-center py-5 text-muted bg-white">
+                                <div class="py-4">
+                                    <i class="bi bi-folder2-open display-4 text-muted opacity-50 mb-2"></i>
+                                    <p class="mb-0">No records found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

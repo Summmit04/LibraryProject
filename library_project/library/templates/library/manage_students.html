@@ -1,0 +1,90 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<style>
+
+    .theme-card {
+        background-color: #ffffff !important;
+        color: var(--bs-primary) !important;
+    }
+    .theme-card .card-title,
+    .theme-card strong {
+        color: var(--bs-primary) !important;
+    }
+
+    [data-bs-theme="dark"] .theme-card {
+        background-color: var(--bs-primary) !important;
+        color: #ffffff !important;                     
+    }
+    [data-bs-theme="dark"] .theme-card .card-title,
+    [data-bs-theme="dark"] .theme-card strong {
+        color: #ffffff !important;                     
+    }
+
+    .theme-avatar {
+        background-color: var(--bs-primary) !important; 
+        color: #ffffff !important;            
+    }
+    [data-bs-theme="dark"] .theme-avatar {
+        background-color: #ffffff !important; 
+        color: var(--bs-primary) !important;            
+    }
+
+    .theme-btn {
+        border: 2px solid var(--bs-primary) !important;
+        color: var(--bs-primary) !important;
+        background-color: transparent;
+    }
+    .theme-btn:hover {
+        background-color: var(--bs-primary) !important;
+        color: #ffffff !important;
+    }
+    [data-bs-theme="dark"] .theme-btn {
+        border: 2px solid #ffffff !important;
+        color: #ffffff !important;
+        background-color: transparent;
+    }
+    [data-bs-theme="dark"] .theme-btn:hover {
+        background-color: #ffffff !important;
+        color: var(--bs-primary) !important;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-body-emphasis">Student Directory</h2>
+        <span class="badge bg-primary text-white fs-6">{{ students|length }} Total Students</span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {% for student in students %}
+        <div class="col">
+            <div class="card shadow-sm hover-lift h-100 border-0 theme-card">
+                <div class="card-body text-center mt-3">
+                    
+                    <div class="theme-avatar rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 70px; height: 70px; font-size: 28px; font-weight: bold;">
+                        {{ student.username|slice:":1"|upper }}
+                    </div>
+                    
+                    <h5 class="card-title fw-bold mb-1">{{ student.username|title }}</h5>
+                    
+                    <p class="small mb-4" style="opacity: 0.9;">
+                        <strong>Class:</strong> {{ student.studentprofile.student_class|default:"Not Assigned" }} <br>
+                        <strong>Roll No:</strong> {{ student.studentprofile.roll_number|default:"Not Assigned" }}
+                    </p>
+                    
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-3 px-3">
+                    <a href="{% url 'student_profile' student.id %}" class="btn theme-btn w-100 fw-bold transition-colors">View Full Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h4 class="text-body-emphasis">No students registered yet.</h4>
+            <p class="text-body-secondary">Once users create accounts, they will appear here automatically.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

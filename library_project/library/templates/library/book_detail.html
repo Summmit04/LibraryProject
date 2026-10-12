@@ -1,0 +1,67 @@
+{% extends 'library/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <a href="{% url 'manage_books' %}" class="btn btn-outline-secondary mb-4">
+        &larr; Back to Inventory
+    </a>
+
+    <div class="card shadow border-0">
+        <div class="row g-0">
+            <div class="col-md-4 text-center bg-dark p-4 d-flex align-items-center justify-content-center rounded-start">
+                {% if book.cover_image %}
+                    <img src="{{ book.cover_image.url }}" alt="{{ book.title }} Cover" class="img-fluid rounded shadow-lg" style="max-height: 450px; object-fit: contain;">
+                {% else %}
+                    <div class="text-white border border-secondary p-5 rounded" style="font-size: 1.2rem;">
+                        No Cover Available
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body p-5">
+                    <span class="badge bg-primary mb-2">{{ book.category.name }}</span>
+                    <h1 class="display-5 fw-bold mb-1">{{ book.title }}</h1>
+                    <p class="fs-4 text-muted mb-4">by <strong>{{ book.author.name }}</strong></p>
+                    
+                    <hr>
+
+                    <div class="row my-4">
+                        <div class="col-sm-6 mb-3">
+                            <span class="text-muted d-block">ISBN Number</span>
+                            <strong>{{ book.isbn_number }}</strong>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <span class="text-muted d-block">Price</span>
+                            <strong class="text-success">${{ book.price }}</strong>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <span class="text-muted d-block">Availability</span>
+                            {% if book.copies_available > 0 %}
+                                <span class="badge bg-success">{{ book.copies_available }} Copies Left</span>
+                            {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <span class="text-muted d-block">Added On</span>
+                            <strong>{{ book.added_on|date:"F d, Y" }}</strong>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5 class="fw-bold mb-3">Book Description</h5>
+                    <p class="text-secondary lh-lg" style="font-size: 1.05rem;">
+                        {% if book.description %}
+                            {{ book.description }}
+                        {% else %}
+                            <em>No description available for this book.</em>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
