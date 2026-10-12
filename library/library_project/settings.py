@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'library_project.library_project.urls'
+ROOT_URLCONF = 'library.library_project.urls'
 
 TEMPLATES = [
     {
@@ -58,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'library_project.wsgi.application'
+WSGI_APPLICATION = 'library.library_project.wsgi.application'
 
 DATABASES = {
     'default': {
