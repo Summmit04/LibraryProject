@@ -2,8 +2,6 @@
 
 A full-stack Django web application designed for managing library operations, tracking book issuance, calculating overdue fines, and providing student management. Built with robust backend logic and a modern responsive Bootstrap UI.
 
-🚀 **Live Demo:** https://library-management-system-yekg.onrender.com/library/
-
 ## ✨ Features
 
 * 🔐 **Authentication & Authorization**: Role-based views for Admin/Librarian and Students.
