@@ -17,10 +17,15 @@ from .models import StudentProfile
 from .forms import IssueBookForm
 
 @login_required
+@login_required
 def admin_dashboard(request):
-
     total_books = Book.objects.count()
-    total_students = User.objects.filter(is_superuser=False).count()
+    
+    if request.user.is_staff:
+        total_students = User.objects.filter(is_superuser=False).count()
+    else:
+        total_students = User.objects.filter(id=request.user.id).count()
+        
     issued_books_count = IssuedBook.objects.filter(is_returned=False).count()
  
     today = timezone.now().date()
