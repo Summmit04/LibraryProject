@@ -19,7 +19,7 @@ SECRET_KEY = 'django-insecure-ejcyc0g)h30p$b0_bf#7&vkf!lw)ypxde9eiopec@(nt@1hnp0
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['summmit04.pythonanywhere.com', '127.0.0.1', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
