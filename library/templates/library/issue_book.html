@@ -18,13 +18,13 @@
                             <label class="form-label fw-semibold">Select Student</label>
                             <select name="student" class="form-select" required>
                                 <option value="" selected disabled>-- Choose a Student --</option>
-                                {% for student in students %}
-                                    <option value="{{ student.id }}">{{ student.username }}</option>
+                                {% for profile in students %}
+                                    <option value="{{ profile.user.id }}">{{ profile.user.first_name|default:profile.user.username }} (Roll: {{ profile.roll_number|default:"N/A" }})</option>
                                 {% endfor %}
                             </select>
                         </div>
                         
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold">Select Book</label>
                             <select name="book" class="form-select" required>
                                 <option value="" selected disabled>-- Choose a Book --</option>
@@ -32,6 +32,12 @@
                                     <option value="{{ book.id }}">{{ book.title }} (Available: {{ book.copies_available }})</option>
                                 {% endfor %}
                             </select>
+                        </div>
+
+                       
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Due Date (Expiry Date)</label>
+                            <input type="date" name="expiry_date" class="form-control" required>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm text-uppercase">

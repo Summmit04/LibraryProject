@@ -11,6 +11,10 @@ import json
 from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
+from .forms import StudentForm
+from django.db import transaction
+from .models import StudentProfile
+from .forms import IssueBookForm
 
 @login_required
 def admin_dashboard(request):
@@ -80,38 +84,40 @@ def manage_books(request):
     return render(request, 'library/manage_books.html', context)
 
 @login_required
-
-
 def issue_book(request):
-    students = User.objects.filter(is_staff=False)
-    books = Book.objects.filter(copies_available__gt=0)
-
     if request.method == 'POST':
         student_id = request.POST.get('student')
         book_id = request.POST.get('book')
-
-        if student_id and book_id:
-            student = get_object_or_404(User, id=student_id)
-            book = get_object_or_404(Book, id=book_id)
-
-            if book.copies_available > 0:
-                expiry = timezone.now().date() + timedelta(days=14)
-                
+        expiry_date = request.POST.get('expiry_date')
+        
+        student_user = get_object_or_404(User, id=student_id)
+        book_obj = get_object_or_404(Book, id=book_id)
+        
+        
+        IssuedBook.objects.create(
+            student=student_user,
+            book=book_obj,
+            expiry_date=expiry_date
+        )
+        
+        
+        if hasattr(book_obj, 'copies_available') and book_obj.copies_available > 0:
+            book_obj.copies_available -= 1
+            book_obj.save()
             
-                IssuedBook.objects.create(
-                    student=student, 
-                    book=book, 
-                    expiry_date=expiry,
-                    fine=0.00
-                )
-                return redirect('book_issued_success')
-
+        return redirect('manage_issued_books')
+        
+    
+    students = StudentProfile.objects.select_related('user').all()
+    books = Book.objects.all()
+    
     context = {
         'students': students,
-        'books': books
+        'books': books,
     }
     return render(request, 'library/issue_book.html', context)
 
+@login_required
 def book_issued_success(request):
     return render(request, 'library/book_issued_success.html')
 
@@ -181,3 +187,86 @@ def delete_book(request, book_id):
     book.delete()
     messages.success(request, f'"{title}" was successfully deleted from inventory.')
     return redirect('manage_books')
+
+
+@login_required
+def add_student(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data.get('email', '')
+            
+            
+            base_username = name.lower().replace(' ', '_')
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+                
+            try:
+                with transaction.atomic():
+                   
+                    user = User.objects.create_user(
+                        username=username, 
+                        email=email, 
+                        first_name=name
+                    )
+                    user.set_unusable_password()
+                    user.save()
+                    
+                 
+                    profile, created = StudentProfile.objects.get_or_create(user=user)
+                    profile.roll_number = form.cleaned_data.get('roll_number')
+                    profile.student_class = form.cleaned_data.get('student_class')
+                    profile.mobile_number = form.cleaned_data.get('mobile_number')
+                    profile.save()
+                    
+                return redirect('manage_students')
+            except Exception as e:
+                form.add_error(None, f"Error saving student: {e}")
+    else:
+        form = StudentForm()
+    return render(request, 'library/add_student.html', {'form': form})
+
+from django.shortcuts import get_object_or_404
+
+@login_required
+def delete_student(request, pk):
+    profile = get_object_or_404(StudentProfile, pk=pk)
+   
+    if profile.user:
+        profile.user.delete()
+    else:
+        profile.delete()
+    return redirect('manage_students')
+
+@login_required
+def issue_book(request):
+    if request.method == 'POST':
+        form = IssueBookForm(request.POST)
+        if form.is_valid():
+            book_issue = form.save(commit=False)
+            
+            
+            book_obj = book_issue.book
+            if hasattr(book_obj, 'copies_available') and book_obj.copies_available > 0:
+                book_obj.copies_available -= 1
+                book_obj.save()
+                
+            book_issue.save()
+            return redirect('manage_issued_books') 
+    else:
+        form = IssueBookForm()
+        
+    
+    students = StudentProfile.objects.select_related('user').filter(user__is_superuser=False, user__is_staff=False)
+    books = Book.objects.all()
+    
+    context = {
+        'form': form,
+        'students': students,
+        'books': books,
+    }
+    return render(request, 'library/issue_book.html', context)

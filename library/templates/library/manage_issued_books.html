@@ -10,7 +10,7 @@
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <!-- Custom heading class for pure Black in day mode & pure White in night mode -->
+            
             <h2 class="fw-bold mb-1 page-heading">
                 {% if request.GET.status == 'overdue' %}Overdue Books{% else %}Currently Issued Books{% endif %}
             </h2>
@@ -22,9 +22,9 @@
         {% endif %}
     </div>
 
-    <!-- Main Card Container -->
+    
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white text-dark">
-        <!-- Project Themed Blue Header -->
+        
         <div class="card-header bg-primary text-white py-3 px-4 border-0">
             <h5 class="mb-0 fw-bold">
                 {% if request.GET.status == 'overdue' %}
@@ -69,7 +69,7 @@
                             </td>
                             {% if request.GET.status == 'overdue' %}
                             <td class="fw-bold text-danger bg-white">
-                                ${{ issued.calculate_fine }}
+                                ₹{{ issued.calculate_fine }}
                             </td>
                             <td class="text-center bg-white">
                                 <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-semibold">
