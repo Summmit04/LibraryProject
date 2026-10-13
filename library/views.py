@@ -192,10 +192,13 @@ def admin_student_profile(request, student_id):
         'borrowed_books': borrowed_books
     })
 
+@login_required
 def manage_students(request):
-    students = User.objects.filter(is_staff=False)
-    context = {'students': students}
-    return render(request, 'library/manage_students.html', context)
+    if not request.user.is_staff:
+        return redirect('student_profile')  
+    
+    students = StudentProfile.objects.all()
+    return render(request, 'library/manage_students.html', {'students': students})
 
 def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)

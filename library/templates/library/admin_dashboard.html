@@ -24,6 +24,7 @@
             </a>
         </div>
         
+        {% if request.user.is_staff %}
         <div class="col-md-3">
             <a href="{% url 'manage_students' %}" class="card dashboard-card-link border-0 shadow-sm bg-body h-100 py-2 text-decoration-none" style="border-left: 4px solid #198754 !important;">
                 <div class="card-body">
@@ -32,6 +33,7 @@
                 </div>
             </a>
         </div>
+        {% endif %}
         
         <div class="col-md-3">
             <a href="{% url 'manage_issued_books' %}" class="card dashboard-card-link border-0 shadow-sm bg-body h-100 py-2 text-decoration-none" style="border-left: 4px solid #ffc107 !important;">
