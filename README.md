@@ -40,3 +40,17 @@ python manage.py migrate
 
 # 5. Run the development server
 python manage.py runserver
+
+## 📸 Application Screenshots
+
+### 1. Analytics & Dashboard Overview
+![Dashboard Overview](screenshots/dashboard.png)
+
+### 2. Library Inventory Management
+![Library Inventory](screenshots/inventory.png)
+
+### 3. Student Directory (Role-Based Isolation)
+![Student Directory](screenshots/student_directory.png)
+
+### 4. Active Issued Books Tracking
+![Issued Books](screenshots/issued_books.png)
