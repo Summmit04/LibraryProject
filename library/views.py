@@ -24,7 +24,7 @@ def admin_dashboard(request):
     if request.user.is_staff:
         total_students = User.objects.filter(is_superuser=False).count()
     else:
-        total_students = User.objects.filter(id=request.user.id).count()
+        total_students = User.objects.filter(studentprofile__added_by=request.user).count()
         
     issued_books_count = IssuedBook.objects.filter(is_returned=False).count()
  
@@ -200,10 +200,10 @@ def admin_student_profile(request, student_id):
 @login_required
 def manage_students(request):
     if request.user.is_staff:
-        students = User.objects.all() 
+        students = User.objects.all()
     else:
-        students = User.objects.filter(id=request.user.id) 
-        
+        students = User.objects.filter(studentprofile__added_by=request.user)
+
     return render(request, 'library/manage_students.html', {'students': students})
 
 def delete_book(request, book_id):
@@ -246,6 +246,7 @@ def add_student(request):
                     profile.roll_number = form.cleaned_data.get('roll_number')
                     profile.student_class = form.cleaned_data.get('student_class')
                     profile.mobile_number = form.cleaned_data.get('mobile_number')
+                    profile.added_by = request.user
                     profile.save()
                     
                 return redirect('manage_students')

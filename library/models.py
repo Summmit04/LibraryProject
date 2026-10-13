@@ -65,6 +65,7 @@ class StudentProfile(models.Model):
     roll_number = models.CharField(max_length=20, blank=True, null=True)
     student_class = models.CharField(max_length=50, blank=True, null=True)
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='added_students')
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
