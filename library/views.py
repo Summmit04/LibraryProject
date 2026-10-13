@@ -194,10 +194,11 @@ def admin_student_profile(request, student_id):
 
 @login_required
 def manage_students(request):
-    if not request.user.is_staff:
-        return redirect('student_profile')  
-    
-    students = StudentProfile.objects.all()
+    if request.user.is_staff:
+        students = User.objects.all() 
+    else:
+        students = User.objects.filter(id=request.user.id) 
+        
     return render(request, 'library/manage_students.html', {'students': students})
 
 def delete_book(request, book_id):
