@@ -8,7 +8,8 @@ urlpatterns = [
     path('issued-books/', views.manage_issued_books, name='manage_issued_books'),
     path('issue-book/', views.issue_book, name='issue_book'),
     path('book/<int:book_id>/', views.book_detail, name='book_detail'),
-    path('student/<int:student_id>/', views.student_profile, name='student_profile'),
+    path('profile/', views.student_profile, name='student_profile'),
+    path('admin-student/<int:student_id>/', views.admin_student_profile, name='admin_student_profile'),
     path('students/', views.manage_students, name='manage_students'),
     path('delete-book/<int:book_id>/', views.delete_book, name='delete_book'),
 

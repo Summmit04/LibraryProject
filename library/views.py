@@ -171,10 +171,26 @@ def book_detail(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, 'library/book_detail.html', {'book': book})
 
-def student_profile(request, student_id):
-    student = get_object_or_404(User, id=student_id)
-    borrowed_books = IssuedBook.objects.filter(student=student).order_by('-issue_date')
-    return render(request, 'library/student_profile.html', {'student': student, 'borrowed_books': borrowed_books})
+@login_required
+def student_profile(request):
+    profile = get_object_or_404(StudentProfile, user=request.user)
+    borrowed_books = IssuedBook.objects.filter(student=request.user).order_by('-issue_date')
+    return render(request, 'library/student_profile.html', {
+        'profile': profile, 
+        'student': request.user, 
+        'borrowed_books': borrowed_books
+    })
+
+@login_required
+def admin_student_profile(request, student_id):
+    student_user = get_object_or_404(User, id=student_id)
+    profile = get_object_or_404(StudentProfile, user=student_user)
+    borrowed_books = IssuedBook.objects.filter(student=student_user).order_by('-issue_date')
+    return render(request, 'library/student_profile.html', {
+        'profile': profile, 
+        'student': student_user,  
+        'borrowed_books': borrowed_books
+    })
 
 def manage_students(request):
     students = User.objects.filter(is_staff=False)
