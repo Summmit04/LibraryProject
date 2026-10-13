@@ -42,16 +42,14 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-## 📸 Application Screenshots
-
 ### 1. Analytics & Dashboard Overview
-![Dashboard Overview](screenshots/dashboard.png)
+![Dashboard Overview](screenshots/dashboard.png?v=2)
 
 ### 2. Library Inventory Management
-![Library Inventory](screenshots/inventory.png)
+![Library Inventory](screenshots/inventory.png?v=2)
 
 ### 3. Student Directory (Role-Based Isolation)
-![Student Directory](screenshots/student_directory.png)
+![Student Directory](screenshots/student_directory.png?v=2)
 
 ### 4. Active Issued Books Tracking
-![Issued Books](screenshots/issued_books.png)
+![Issued Books](screenshots/issued_books.png?v=2)
