@@ -2,6 +2,9 @@
 
 A full-stack Django web application designed for managing library operations, tracking book issuance, calculating overdue fines, and providing student management. Built with robust backend logic and a modern responsive Bootstrap UI.
 
+## 🌐 Live Demo
+Check out the live deployment here: [Library Management System](https://summmit04.pythonanywhere.com)
+
 ## ✨ Features
 
 * 🔐 **Authentication & Authorization**: Role-based views for Admin/Librarian and Students.
