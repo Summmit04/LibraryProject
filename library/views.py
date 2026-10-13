@@ -275,7 +275,6 @@ def issue_book(request):
         if form.is_valid():
             book_issue = form.save(commit=False)
             
-            
             book_obj = book_issue.book
             if hasattr(book_obj, 'copies_available') and book_obj.copies_available > 0:
                 book_obj.copies_available -= 1
@@ -286,8 +285,11 @@ def issue_book(request):
     else:
         form = IssueBookForm()
         
-    
-    students = StudentProfile.objects.select_related('user').filter(user__is_superuser=False, user__is_staff=False)
+    if request.user.is_staff:
+        students = StudentProfile.objects.select_related('user').filter(user__is_superuser=False, user__is_staff=False)
+    else:
+        students = StudentProfile.objects.select_related('user').filter(added_by=request.user)
+        
     books = Book.objects.all()
     
     context = {
