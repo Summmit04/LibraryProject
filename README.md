@@ -7,24 +7,24 @@ Check out the live deployment here: [Library Management System](https://summmit0
 
 ## ✨ Features
 
-* 🔐 **Authentication & Authorization**: Role-based views for Admin/Librarian and Students.
-* 📖 **Book Management**: Full CRUD functionality for books, genres, and availability.
-* ⏱️ **Issuance & Fine Calculation**: Automated overdue detection with dynamic daily fine calculation logic.
-* 🌗 **Modern UI/UX**: Fully responsive Bootstrap UI supporting seamless Light & Dark mode toggle.
-* 📊 **Dashboard**: Real-time analytics for current loans, overdue records, and student profiles.
+- 🔐 **Authentication & Authorization**: Role-based views for Admin/Librarian and Students.
+- 📖 **Book Management**: Full CRUD functionality for books, genres, and availability.
+- ⏱️ **Issuance & Fine Calculation**: Automated overdue detection with dynamic daily fine calculation logic.
+- 🌗 **Modern UI/UX**: Fully responsive Bootstrap UI supporting seamless Light & Dark mode toggle.
+- 📊 **Dashboard**: Real-time analytics for current loans, overdue records, and student profiles.
 
 ## 🛠️ Tech Stack
 
-* **Backend**: Python, Django
-* **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
-* **Database**: SQLite
-* **Version Control**: Git, GitHub
+- **Backend**: Python, Django
+- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap 5
+- **Database**: SQLite
+- **Version Control**: Git, GitHub
 
 ## 🚀 Quick Setup & Installation
 
 ```bash
-# 1. Clone the repository
-git clone [https://github.com/Summmit04/LibraryProject.git](https://github.com/Summmit04/LibraryProject.git)
+# 1. Clone repository
+git clone https://github.com/Summmit04/LibraryProject.git
 cd LibraryProject
 
 # 2. Create and activate virtual environment
@@ -40,17 +40,3 @@ python manage.py migrate
 
 # 5. Run the development server
 python manage.py runserver
-
-## 📸 Application Screenshots
-
-### 1. Analytics & Dashboard Overview
-![Dashboard Overview](screenshots/dashboard.png)
-
-### 2. Library Inventory Management
-![Library Inventory](screenshots/inventory.png)
-
-### 3. Student Directory (Role-Based Isolation)
-![Student Directory](screenshots/student_directory.png)
-
-### 4. Active Issued Books Tracking
-![Issued Books](screenshots/issued_books.png)
