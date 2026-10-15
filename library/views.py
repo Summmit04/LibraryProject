@@ -19,7 +19,7 @@ from .forms import IssueBookForm
 
 @login_required
 def admin_dashboard(request):
-    total_books = Book.objects.count()
+    total_books = Book.objects.filter(user=request.user).count()
     
     if request.user.is_staff:
         total_students = User.objects.filter(is_superuser=False).count()
