@@ -8,9 +8,7 @@
                 
                 <div class="d-flex align-items-center gap-3">
                     <h4 class="mb-0 fw-bold">Library Inventory</h4>
-                    {% if request.user.is_staff %}
                         <a href="{% url 'add_book' %}" class="btn btn-sm btn-light fw-bold text-success shadow-sm">+ Add Book</a>
-                    {% endif %}
                 </div>
                 
                 <form method="GET" action="{% url 'manage_books' %}" class="row g-2 align-items-center m-0">
