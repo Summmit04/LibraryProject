@@ -16,7 +16,7 @@ from django.db import transaction
 from .models import StudentProfile
 from .forms import IssueBookForm
 
-@login_required
+
 @login_required
 def admin_dashboard(request):
     total_books = Book.objects.count()
@@ -58,35 +58,39 @@ def admin_dashboard(request):
     
     return render(request, 'library/admin_dashboard.html', context)
 
+@login_required
 def manage_books(request):
-    query = request.GET.get('search_query', '')
-    category_id = request.GET.get('category', '')
-    availability = request.GET.get('availability', '')
+  query = request.GET.get('search_query', '')
+  category_id = request.GET.get('category', '')
+  availability = request.GET.get('availability', '')
 
-    books = Book.objects.all()
+ 
+  books = Book.objects.filter(user=request.user)
 
-    if query:
-        books = books.filter(Q(title__icontains=query) | Q(author__name__icontains=query))
+  if query:
+    books = books.filter(
+        Q(title__icontains=query) | Q(author__name__icontains=query)
+    )
 
-    if category_id:
-        books = books.filter(category_id=category_id)
+  if category_id:
+    books = books.filter(category_id=category_id)
 
-    if availability:
-        if availability == 'available':
-            books = books.filter(copies_available__gt=0)
-        elif availability == 'out_of_stock':
-            books = books.filter(copies_available=0)
+  if availability:
+    if availability == 'available':
+      books = books.filter(copies_available__gt=0)
+    elif availability == 'out_of_stock':
+      books = books.filter(copies_available=0)
 
-    categories = Category.objects.all()
+  categories = Category.objects.all()
 
-    context = {
-        'books': books,
-        'categories': categories,
-        'query': query,
-        'selected_category': category_id,
-        'selected_availability': availability,
-    }
-    return render(request, 'library/manage_books.html', context)
+  context = {
+      'books': books,
+      'categories': categories,
+      'query': query,
+      'selected_category': category_id,
+      'selected_availability': availability,
+  }
+  return render(request, 'library/manage_books.html', context)
 
 @login_required
 def issue_book(request):
@@ -301,31 +305,32 @@ def issue_book(request):
 
 @login_required
 def add_book(request):
-    if not request.user.is_staff:
-        return redirect('manage_books')
+  
+  if request.method == 'POST':
+    title = request.POST.get('title')
+    category_name = request.POST.get('category_name').strip()
+    author_name = request.POST.get('author_name').strip()
+    isbn_number = request.POST.get('isbn_number')
+    price = request.POST.get('price')
+    copies_available = request.POST.get('copies_available', 1)
+    description = request.POST.get('description')
+    cover_image = request.FILES.get('cover_image')
 
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        category_name = request.POST.get('category_name').strip()
-        author_name = request.POST.get('author_name').strip()
-        isbn_number = request.POST.get('isbn_number')
-        price = request.POST.get('price')
-        copies_available = request.POST.get('copies_available', 1)
-        description = request.POST.get('description')
-        cover_image = request.FILES.get('cover_image')
-        category, _ = Category.objects.get_or_create(name=category_name)
-        author, _ = Author.objects.get_or_create(name=author_name)
+    category, _ = Category.objects.get_or_create(name=category_name)
+    author, _ = Author.objects.get_or_create(name=author_name)
 
-        Book.objects.create(
-            title=title,
-            category=category,
-            author=author,
-            isbn_number=isbn_number,
-            price=price,
-            copies_available=copies_available,
-            cover_image=cover_image,
-            description=description
-        )
-        return redirect('manage_books')
+    
+    Book.objects.create(
+        user=request.user,
+        title=title,
+        category=category,
+        author=author,
+        isbn_number=isbn_number,
+        price=price,
+        copies_available=copies_available,
+        cover_image=cover_image,
+        description=description,
+    )
+    return redirect('manage_books')
 
-    return render(request, 'library/add_book.html')
+  return render(request, 'library/add_book.html')
