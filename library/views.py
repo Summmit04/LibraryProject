@@ -298,3 +298,34 @@ def issue_book(request):
         'books': books,
     }
     return render(request, 'library/issue_book.html', context)
+
+@login_required
+def add_book(request):
+    if not request.user.is_staff:
+        return redirect('manage_books')
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        category_name = request.POST.get('category_name').strip()
+        author_name = request.POST.get('author_name').strip()
+        isbn_number = request.POST.get('isbn_number')
+        price = request.POST.get('price')
+        copies_available = request.POST.get('copies_available', 1)
+        description = request.POST.get('description')
+        cover_image = request.FILES.get('cover_image')
+        category, _ = Category.objects.get_or_create(name=category_name)
+        author, _ = Author.objects.get_or_create(name=author_name)
+
+        Book.objects.create(
+            title=title,
+            category=category,
+            author=author,
+            isbn_number=isbn_number,
+            price=price,
+            copies_available=copies_available,
+            cover_image=cover_image,
+            description=description
+        )
+        return redirect('manage_books')
+
+    return render(request, 'library/add_book.html')

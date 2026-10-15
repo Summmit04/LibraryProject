@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <head>
+    <style>
+    /* Table row pop-out hover effect */
+    .table tbody tr {
+        transition: all 0.25s ease-in-out;
+    }
+    .table tbody tr:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff !important;
+        position: relative;
+        z-index: 5;
+    }
+</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Management System</title>

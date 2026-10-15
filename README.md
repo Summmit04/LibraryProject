@@ -45,6 +45,7 @@ python manage.py runserver
 ## 📸 Application Screenshots
 
 ### 1. Analytics & Dashboard Overview
+<<<<<<< HEAD
 ![Dashboard Overview](https://github.com/Summmit04/LibraryProject/blob/main/screenshots/dashboard.png?raw=true)
 
 ### 2. Library Inventory Management
@@ -55,3 +56,15 @@ python manage.py runserver
 
 ### 4. Active Issued Books Tracking
 ![Issued Books](https://github.com/Summmit04/LibraryProject/blob/main/screenshots/issued_books.png?raw=true)
+=======
+![Dashboard Overview](screenshots/dashboard_v2.png)
+
+### 2. Library Inventory Management
+![Library Inventory](screenshots/inventory_v2.png)
+
+### 3. Student Directory (Role-Based Isolation)
+![Student Directory](screenshots/student_directory_v2.png)
+
+### 4. Active Issued Books Tracking
+![Issued Books](screenshots/issued_books_v2.png)
+>>>>>>> 21db230 (Update screenshots with new filenames to bypass cache)
